@@ -14,7 +14,7 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',  // 监听所有网络接口
-    port: 7003,       // 配置监听端口
+    port: 7002,       // 配置监听端口
     https: {
       key: fs.readFileSync('/etc/letsencrypt/live/canyyang.xyz/privkey.pem'),
       cert: fs.readFileSync('/etc/letsencrypt/live/canyyang.xyz/fullchain.pem'),
