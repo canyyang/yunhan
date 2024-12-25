@@ -1,0 +1,67 @@
+<script setup>
+import { ref } from 'vue'
+import { ElCard, ElInput, ElButton, ElMessage } from 'element-plus'
+import { login } from '../services'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const password = ref('')
+
+const submit = async () => {
+  const res = await login(password.value)
+  if (res.code === 500) {
+    ElMessage({
+      message: res.msg,
+      type: 'error',
+    })
+    return
+  }
+  if (res.code === 200) {
+    ElMessage({
+      message: res.msg,
+      type: 'success',
+    })
+    const { token } =  res.data
+    localStorage.setItem('token', token)
+    setTimeout(() => {
+      router.push({
+        path: '/'
+      })
+    }, 500)
+  }
+}
+</script>
+
+<template>
+  <div>
+    <el-card class="card">
+      <h2 class="title">云汉教育</h2>
+      <el-input v-model="password" class="input" placeholder="请输入密码" />
+      <el-button type="primary" class="button" @click="submit()">确认</el-button>
+    </el-card>
+  </div>
+</template>
+
+<style scoped>
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  margin: 30vh 10vw;
+  padding: 0 10vw;
+  width: 80vw;
+  height: 60vw;
+}
+.title {
+  margin-bottom: 2vw;
+  width: 60vw;
+  text-align: center;
+  color: #409eff;
+}
+.input, .button {
+  width: 60vw;
+  margin-top: 4vw;
+}
+</style>
