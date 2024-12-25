@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'blog', // 项目名称
+      name: 'yunhan', // 项目名称
       script: 'vite-admin-server.js',
       env: {
         PORT: 7002
