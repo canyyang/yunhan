@@ -256,4 +256,7 @@ const commit = async () => {
   width: 90vw;
   margin-left: 4vw;
 }
+.submit {
+  margin-bottom: 4vw;
+}
 </style>

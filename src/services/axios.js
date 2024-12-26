@@ -15,7 +15,6 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    console.log('conig', config)
     const token = localStorage.getItem('token'); // 或从 cookies 获取
     if (token) {
       config.headers['Authorization'] =token;
@@ -30,7 +29,6 @@ axiosInstance.interceptors.request.use(
 // 响应拦截器，统一处理响应数据
 axiosInstance.interceptors.response.use(
   (response) => {
-    console.log('response', response)
     if (response.data.code === 401) {
       window.location.href = '/login'
       console.log('response', response)

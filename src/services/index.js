@@ -19,7 +19,6 @@ export async function getStudentList(formInline, pageNum) {
       filter: formInline,
       pageNum: pageNum
     })
-    console.log(res)
     return res.data;
   } catch (error) {
     console.error("网络异常", error);

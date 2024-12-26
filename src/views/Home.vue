@@ -26,7 +26,6 @@ async function fetchData() {
     const data = await getStudentList(formInline, pageNum.value)
     tableData.splice(0, tableData.length, ...data.list)
     total.value = data.total
-    console.log(data)
   } catch (err) {
     console.error(err)
   }

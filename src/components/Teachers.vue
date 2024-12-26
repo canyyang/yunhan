@@ -20,7 +20,6 @@ async function fetchData() {
     const data = await getTeacherList(formInline)
     tableData.splice(0, tableData.length, ...data.list)
     total.value = data.total
-    console.log(data)
   } catch (err) {
     console.error(err)
   }
@@ -198,7 +197,7 @@ const handleCurrentChange = () => {
       </el-table-column>
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="sex" label="性别" />
-      <el-table-column prop="address" label="地址" width="200" />
+      <el-table-column prop="address" label="地址" width="200" show-overflow-tooltip />
       <el-table-column fixed="right" label="操作" min-width="70">
         <template #default="{ row }">
           <el-button link type="primary" size="small" @click="openCharge(row.id, row.name)">详情</el-button>
