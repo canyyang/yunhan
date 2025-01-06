@@ -3,6 +3,9 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElForm, ElFormItem, ElInput, ElRadioGroup, ElRadio, ElCheckboxGroup, ElCheckbox, ElButton, ElDialog, ElLoading, ElMessage, ElSelect, ElOption } from 'element-plus'
 import { addStudent } from '@/services'
 import { getStage } from '@/utils'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const stage = getStage()
 
@@ -127,15 +130,21 @@ const commit = async () => {
     message: '提交成功',
     type: 'success',
     })
+    loading.close()
+    dialogVisible.value = false
+    setTimeout(() => {
+      router.push({
+        path: '/'
+      })
+    }, 300)
   } catch (error) {
     console.error('添加学生失败:', error);
     ElMessage({
       message: '网络错误',
       type: 'error',
     })
-  } finally {
     loading.close()
-    dialogVisible.value = false
+    dialogVisible.value = fals
   }
 }
 

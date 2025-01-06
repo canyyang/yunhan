@@ -48,9 +48,12 @@ export async function getPublicStudent() {
 
 
 
-export async function getTeacherList(data) {
+export async function getTeacherList(formInline, pageNum) {
   try {
-    const res = await axios.post('/teacher/get', data);
+    const res = await axios.post('/teacher/get', {
+      filter: formInline,
+      pageNum: pageNum
+    });
     return res.data;
   } catch (error) {
     console.error("网络异常", error);

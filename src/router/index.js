@@ -6,7 +6,11 @@ import Home from "@/views/Home.vue"
 const routes = [
   {
     path:"/",
-    component: Home
+    component: () => import("@/views/Home.vue")
+  },
+  {
+    path:"/admin",
+    component: () => import("@/views/Admin.vue")
   },
   {
     path: "/public",

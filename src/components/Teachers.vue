@@ -18,7 +18,7 @@ onMounted(() => {
 
 async function fetchData() {
   try {
-    const data = await getTeacherList(formInline)
+    const data = await getTeacherList(formInline, pageNum.value)
     tableData.splice(0, tableData.length, ...data.list)
     total.value = data.total
   } catch (err) {

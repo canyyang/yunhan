@@ -26,7 +26,7 @@ const submit = async () => {
     localStorage.setItem('token', token)
     setTimeout(() => {
       router.push({
-        path: '/'
+        path: '/admin'
       })
     }, 500)
   }
