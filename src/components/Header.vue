@@ -15,7 +15,7 @@ const goPath = (path) => {
 
 <template>
   <div class="tab">
-    <span class="title" @click="goPath('/')">云汉教育</span>
+    <span class="title" @click="goPath('/admin')">云汉教育</span>
     <el-dropdown>
       <span class="title">
         其他 ∨
