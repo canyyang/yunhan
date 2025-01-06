@@ -109,6 +109,8 @@ const commit = async () => {
   }
 }
 
+const areas = ['榕城', '东山', '蓝城', '渔湖', '梅云', '仙桥', '曲溪', '埔田', '云路', '锡场', '炮台', '玉滘', '揭西', '惠来', '其他']
+
 </script>
 
 <template>
@@ -130,7 +132,7 @@ const commit = async () => {
       </el-form-item>
       <el-form-item label="3、教学科目">
         <el-checkbox-group v-model="form.subject">
-          <el-checkbox v-for="item in ['语文', '数学', '英语', '物理', '化学', '生物', '历史', '政治', '地理']"
+          <el-checkbox v-for="item in ['语文', '数学', '英语', '物理', '化学', '生物', '历史', '政治', '地理', '全科']"
             :key="item"
             :label="item"
             :value="item"
@@ -147,9 +149,7 @@ const commit = async () => {
       </el-form-item>
       <el-form-item label="5、可接受的教学地区">
         <el-checkbox-group v-model="form.area">
-          <el-checkbox  size="large" label="榕城" value="榕城" />
-          <el-checkbox  size="large" label="东山" value="东山" />
-          <el-checkbox  size="large" label="蓝城" value="蓝城" />
+          <el-checkbox v-for="item in areas"  size="large" :label="item" :value="item" />
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="6、详细住址">

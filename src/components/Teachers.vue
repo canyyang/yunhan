@@ -9,6 +9,7 @@ const props = defineProps(['student', 'edit'])
 const emit = defineEmits()
 
 const subjects = ['语文', '数学', '英语', '物理', '化学', '生物', '历史', '政治', '地理']
+const areas = ['榕城', '东山', '蓝城', '渔湖', '梅云', '仙桥', '曲溪', '埔田', '云路', '锡场', '炮台', '玉滘', '揭西', '惠来', '其他']
 
 onMounted(() => {
   fetchData()
@@ -54,11 +55,11 @@ const dialogConfirmVisible = ref(false)
 const selectId = ref(0)
 const selectName = ref('')
 
-const openCharge = (id, name) => {
-  getDetail(id)
-  dialogFormVisible.value = true
+const openCharge = async (id, name) => {
+  await getDetail(id)
   selectId.value = id
   selectName.value = name
+  dialogFormVisible.value = true
 }
 
 const cancelCharge = () => {
@@ -174,7 +175,7 @@ const handleCurrentChange = () => {
           placeholder="授课地区"
         >
           <el-option
-            v-for="item in ['小学', '初中', '高中']"
+            v-for="item in areas"
             :key="item"
             :label="item"
             :value="item"

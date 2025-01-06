@@ -136,6 +136,7 @@ export async function editCharge(data) {
 }
 
 export async function chargeStudent(data) {
+  console.log(data)
   return axios.post('/student/edit/teacher', data)
     .then((res) => {
       return res.data;
