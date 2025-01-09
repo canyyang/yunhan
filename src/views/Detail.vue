@@ -36,7 +36,7 @@ const deleteSelectStudent = async function() {
   const successFn = () => {
     dialogConfirmVisible.value = false
     router.push({
-      path: '/'
+      path: '/admin'
     })
   }
   charge('删除中', data, deleteStudent, '删除成功', successFn)
