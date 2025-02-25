@@ -37,8 +37,8 @@ const submit = async () => {
   <div>
     <el-card class="card">
       <h2 class="title">云汉教育</h2>
-      <el-input v-model="password" class="input" placeholder="请输入密码" />
-      <el-button type="primary" class="button" @click="submit()">确认</el-button>
+      <el-input v-model="password" type="password" class="input" placeholder="请输入密码" />
+      <el-button type="primary"  class="button" @click="submit()">确认</el-button>
     </el-card>
   </div>
 </template>
