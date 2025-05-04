@@ -34,7 +34,7 @@ const submit = async () => {
 </script>
 
 <template>
-  <div>
+  <div class="container">
     <el-card class="card">
       <h2 class="title">云汉教育</h2>
       <el-input v-model="password" type="password" class="input" placeholder="请输入密码" />
@@ -44,24 +44,37 @@ const submit = async () => {
 </template>
 
 <style scoped>
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
 .card {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
-  margin: 30vh 10vw;
-  padding: 0 10vw;
-  width: 80vw;
-  height: 60vw;
+  padding: 7px 30px;
+  width: 360px;
+  height: 220px;
 }
 .title {
-  margin-bottom: 2vw;
-  width: 60vw;
+  width: 300px;
+  height: 14px;
+  line-height: 14px;
   text-align: center;
   color: #409eff;
 }
-.input, .button {
-  width: 60vw;
-  margin-top: 4vw;
+.input {
+  width: 300px;
+  margin-top: 18px;
+}
+.button {
+  width: 300px;
+  margin-top: 26px;
 }
 </style>
