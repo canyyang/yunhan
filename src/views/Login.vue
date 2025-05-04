@@ -59,22 +59,22 @@ const submit = async () => {
   align-items: center;
   box-sizing: border-box;
   padding: 7px 30px;
-  width: 360px;
+  width: 320px;
   height: 220px;
 }
 .title {
-  width: 300px;
+  width: 260px;
   height: 14px;
   line-height: 14px;
   text-align: center;
   color: #409eff;
 }
 .input {
-  width: 300px;
+  width: 260px;
   margin-top: 18px;
 }
 .button {
-  width: 300px;
+  width: 260px;
   margin-top: 26px;
 }
 </style>
