@@ -218,5 +218,6 @@ const areas = ['榕城', '东山', '蓝城', '渔湖', '梅云', '仙桥', '曲�
 }
 .submit {
   margin-bottom: 4vw;
+  max-width: 600px;
 }
 </style>

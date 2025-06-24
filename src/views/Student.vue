@@ -156,6 +156,7 @@ const commit = async () => {
     <el-form :model="form" 
       label-position="top"
       label-width="auto" 
+      style="max-width: 600px" 
       class="form">
       <el-form-item label="1、姓名">
         <el-input v-model="form.name" />
@@ -238,7 +239,7 @@ const commit = async () => {
         </el-select>
     </el-form-item>
     </el-form>
-    <el-button type="primary" class="submit" @click="submit()">提交</el-button>
+    <el-button  type="primary" class="submit" @click="submit()">提交</el-button>
     <el-dialog v-model="dialogVisible"  width="70%" top="38vh">
       <span>是否确认提交</span>
       <template #footer>
@@ -267,5 +268,6 @@ const commit = async () => {
 }
 .submit {
   margin-bottom: 4vw;
+  max-width: 600px;
 }
 </style>
