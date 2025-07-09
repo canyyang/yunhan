@@ -201,7 +201,7 @@ const commit = async () => {
       </el-form-item>
       <el-form-item label="10、补习科目">
         <el-checkbox-group v-model="form.need">
-          <el-checkbox v-for="item in ['语文', '数学', '英语', '物理', '化学', '生物', '历史', '政治', '地理', '全科']"
+          <el-checkbox v-for="item in ['语文', '数学', '英语', '物理', '化学', '生物', '历史', '政治', '地理']"
             :key="item"
             :label="item"
             :value="item"

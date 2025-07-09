@@ -188,6 +188,16 @@ const isDelete = ref(true)
         {{detailData.qq}}
       </el-descriptions-item>
       <el-descriptions-item
+        v-if="detailData.school"
+        label="学校"
+        width="77vw"
+        align="center"
+        label-align="center"
+        span="2"
+      >
+      {{ detailData.school }}
+    </el-descriptions-item>
+      <el-descriptions-item
         v-if="detailData.remark"
         label="备注"
         width="77vw"
