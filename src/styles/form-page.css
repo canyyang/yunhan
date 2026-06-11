@@ -1,0 +1,35 @@
+.form-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 24px;
+}
+
+.form-page .title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 20px 0;
+  font-weight: bold;
+  color: #409eff;
+}
+
+.form-page .form,
+.form-page .submit {
+  width: 100%;
+  max-width: 600px;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.form-page .submit {
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .form-page .form :deep(.el-checkbox) {
+    margin-right: 12px;
+    margin-bottom: 8px;
+  }
+}

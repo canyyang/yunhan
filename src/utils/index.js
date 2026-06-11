@@ -20,19 +20,18 @@ export async function charge(loadingText, data, chargeFn, successText, successFn
     background: 'rgba(0, 0, 0, 0.7)',
   })
   try {
-    await chargeFn(data);
+    await chargeFn(data)
     ElMessage({
-    message: successText,
-    type: 'success',
+      message: successText,
+      type: 'success',
     })
+    successFn()
   } catch (error) {
-    console.log(error)
     ElMessage({
       message: '网络错误',
       type: 'error',
     })
   } finally {
     loading.close()
-    successFn()
   }
 }

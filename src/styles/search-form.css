@@ -1,0 +1,66 @@
+.search-form {
+  margin: 1vw 3vw;
+}
+
+.search-form .search-form-item:nth-child(odd) {
+  margin-right: 3vw;
+}
+
+.search-form .search-form-item:nth-child(even) {
+  margin-right: 0;
+}
+
+.search-form-item {
+  width: 45vw;
+}
+
+.search-form-address {
+  width: 70vw;
+  margin-right: 6vw;
+}
+
+.search-form-button {
+  margin-right: 0;
+}
+
+@media (max-width: 768px) {
+  .search-form {
+    margin: 0;
+  }
+
+  .search-form .search-form-item:nth-child(odd),
+  .search-form .search-form-item:nth-child(even) {
+    margin-right: 0;
+  }
+
+  .search-form-item,
+  .search-form-address {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .search-form .el-form-item {
+    display: block;
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+
+  .search-form .el-form-item__label {
+    height: auto;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+
+  .search-form-button {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .search-form-button .el-form-item__content,
+  .search-form-button .el-button {
+    width: 100%;
+    margin-left: 0;
+  }
+}

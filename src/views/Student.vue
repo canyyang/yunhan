@@ -1,273 +1,469 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { ElForm, ElFormItem, ElInput, ElRadioGroup, ElRadio, ElCheckboxGroup, ElCheckbox, ElButton, ElDialog, ElLoading, ElMessage, ElSelect, ElOption } from 'element-plus'
+import { computed, reactive, ref, watch } from 'vue'
+import {
+  ElButton,
+  ElCard,
+  ElCheckbox,
+  ElCheckboxGroup,
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElLoading,
+  ElMessage,
+  ElOption,
+  ElRadio,
+  ElRadioGroup,
+  ElSelect,
+  ElStep,
+  ElSteps,
+  ElTag,
+} from 'element-plus'
+import { useRouter } from 'vue-router'
+import { SUBJECTS, STUDENT_GRADES, STUDENT_SOURCES } from '@/constants'
 import { addStudent } from '@/services'
 import { getStage } from '@/utils'
-import { useRouter } from 'vue-router'
 
 const router = useRouter()
-
 const stage = getStage()
+const DRAFT_KEY = 'yunhan_student_register_draft'
 
-const form = reactive({
-  name: '', // 姓名
-  sex: '', // 性别
-  subject: '', // 选科
-  grade: '', // 年级
-  school: '', // 学校
-  address: '', // 地址
-  phone: '', // 电话号码
-  wechat: '', // 微信
-  qq: '', // qq
-  need: [], // 补习科目
-  period: '', // 补习时间
-  score: '', // 当前水平
-  remark: '', // 备注
-  yunhan: undefined, // 是否云汉推荐
-  source: '' // 来源
+const createInitialForm = () => ({
+  name: '',
+  sex: '',
+  subject: '',
+  grade: '',
+  school: '',
+  address: '',
+  phone: '',
+  wechat: '',
+  qq: '',
+  need: [],
+  period: '',
+  score: '',
+  remark: '',
+  yunhan: undefined,
+  source: '',
 })
 
-const dialogVisible = ref(false)
+const loadDraft = () => {
+  try {
+    const draft = localStorage.getItem(DRAFT_KEY)
+    return draft ? { ...createInitialForm(), ...JSON.parse(draft) } : createInitialForm()
+  } catch (error) {
+    return createInitialForm()
+  }
+}
 
-const submit = () => {
-  if (form.name === '') {
-    ElMessage({
-      message: '请填写姓名',
-      type: 'warning',
-    })
-    return
+const form = reactive(loadDraft())
+const activeStep = ref(0)
+const isSubmitted = ref(false)
+
+const steps = [
+  { title: '基本信息', description: '确认学员身份与学校' },
+  { title: '学习需求', description: '填写科目、时间与当前水平' },
+  { title: '联系方式', description: '至少留下一种有效联系方式' },
+  { title: '确认提交', description: '检查信息后完成报名' },
+]
+
+const summaryGroups = computed(() => [
+  {
+    title: '基本信息',
+    items: [
+      ['姓名', form.name],
+      ['性别', form.sex],
+      ['年级', form.grade],
+      ['就读学校', form.school],
+      ['选课方向', form.subject || '未填写'],
+      ['详细住址', form.address],
+    ],
+  },
+  {
+    title: '学习需求',
+    items: [
+      ['补习科目', form.need.join('、')],
+      ['补习时间', form.period],
+      ['当前水平', form.score],
+      ['教员要求', form.remark || '无'],
+    ],
+  },
+  {
+    title: '联系与来源',
+    items: [
+      ['联系电话', form.phone || '未填写'],
+      ['微信号', form.wechat || '未填写'],
+      ['QQ号', form.qq || '未填写'],
+      ['是否云汉负责人推荐', form.yunhan === 'true' ? '是' : '否'],
+      ['获知方式', form.source],
+    ],
+  },
+])
+
+watch(
+  form,
+  (value) => {
+    if (!isSubmitted.value) {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(value))
+    }
+  },
+  { deep: true },
+)
+
+const showWarning = (message) => {
+  ElMessage({ message, type: 'warning' })
+}
+
+const validateStep = (step = activeStep.value) => {
+  if (step === 0) {
+    if (!form.name) return showWarning('请填写姓名')
+    if (!form.sex) return showWarning('请选择性别')
+    if (!form.grade) return showWarning('请选择年级')
+    if (!form.school) return showWarning('请填写学校信息')
+    if (!form.address) return showWarning('请填写详细住址')
   }
-  if (form.sex === -1) {
-    ElMessage({
-      message: '请选择性别',
-      type: 'warning',
-    })
-    return
+
+  if (step === 1) {
+    if (form.need.length === 0) return showWarning('请选择补习科目')
+    if (!form.period) return showWarning('请填写补习时间')
+    if (!form.score) return showWarning('请填写学员当前水平')
   }
-  if (form.grade === '') {
-    ElMessage({
-      message: '请选择年级',
-      type: 'warning',
-    })
-    return
+
+  if (step === 2) {
+    if (!form.phone && !form.wechat && !form.qq) {
+      return showWarning('请至少填写一项联系方式')
+    }
+    if (form.yunhan === undefined) return showWarning('请选择是否为云汉负责人推荐')
+    if (!form.source) return showWarning('请选择信息来源')
   }
-  if (form.school === '') {
-    ElMessage({
-      message: '请填写学校信息',
-      type: 'warning',
-    })
-    return
-  }
-  if (form.address === '') {
-    ElMessage({
-      message: '请填写详细住址',
-      type: 'warning',
-    })
-    return
-  }
-  if (form.phone === '' && form.wechat === '' && form.qq === '') {
-    ElMessage({
-      message: '请至少填写一项联系方式',
-      type: 'warning',
-    })
-    return
-  }
-  if (form.need.length === 0) {
-    ElMessage({
-      message: '请选择补习科目',
-      type: 'warning',
-    })
-    return
-  }
-  if (form.period === '') {
-    ElMessage({
-      message: '请填写补习时间',
-      type: 'warning',
-    })
-    return
-  }
-  if (form.score === '') {
-    ElMessage({
-      message: '请填写学员成绩',
-      type: 'warning',
-    })
-    return
-  }
-  if (form.yunhan === undefined) {
-    ElMessage({
-      message: '请选择信息来源',
-      type: 'warning',
-    })
-    return
-  }
-  if (form.source === '') {
-    ElMessage({
-      message: '请选择信息来源',
-      type: 'warning',
-    })
-    return
-  }
-  dialogVisible.value = true
+
+  return true
+}
+
+const nextStep = () => {
+  if (!validateStep()) return
+  activeStep.value += 1
+}
+
+const prevStep = () => {
+  activeStep.value -= 1
 }
 
 const commit = async () => {
+  if (!validateStep(0) || !validateStep(1) || !validateStep(2)) return
+
   const loading = ElLoading.service({
     lock: true,
     text: '提交中',
-    background: 'rgba(0, 0, 0, 0.7)',
+    background: 'rgba(15, 23, 42, 0.45)',
   })
 
-
-  const data = {
-    ...form,
-    time: new Date().getTime(),
-    stage: stage
-  }
   try {
-    const result = await addStudent(data);
-    console.log('学术添加成功:', result);
-    ElMessage({
-    message: '提交成功',
-    type: 'success',
+    await addStudent({
+      ...form,
+      time: new Date().getTime(),
+      stage,
     })
-    loading.close()
-    dialogVisible.value = false
-    setTimeout(() => {
-      router.push({
-        path: '/'
-      })
-    }, 300)
+    isSubmitted.value = true
+    localStorage.removeItem(DRAFT_KEY)
+    ElMessage({ message: '提交成功', type: 'success' })
   } catch (error) {
-    console.error('添加学生失败:', error);
-    ElMessage({
-      message: '网络错误',
-      type: 'error',
-    })
+    ElMessage({ message: '网络错误，请稍后重试', type: 'error' })
+  } finally {
     loading.close()
-    dialogVisible.value = fals
   }
 }
 
+const goHome = () => {
+  router.push({ path: '/' })
+}
 </script>
 
 <template>
-  <div class="container">
-    <p class="title">云汉{{stage}}期学员报名表</p>
-    <el-form :model="form" 
-      label-position="top"
-      label-width="auto" 
-      style="max-width: 600px" 
-      class="form">
-      <el-form-item label="1、姓名">
-        <el-input v-model="form.name" />
-      </el-form-item>
-      <el-form-item label="2、性别">
-        <el-radio-group v-model="form.sex">
-          <el-radio value="男" size="large">男</el-radio>
-          <el-radio value="女" size="large">女</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="3、年级">
-        <el-select
-          v-model="form.grade"
-          placeholder="请选择年级"
-          size="large"
-        >
-          <el-option
-            v-for="item in ['小学', '初一', '初二', '初三', '高一', '高二', '高三', '其他']"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="4、选课方向">
-        <el-input v-model="form.subject" placeholder="非高中生无需填写"/>
-      </el-form-item>
-      <el-form-item label="5、就读学校">
-        <el-input v-model="form.school" placeholder="当前就读学校"/>
-      </el-form-item>
-      <el-form-item label="6、详细住址">
-        <el-input v-model="form.address" placeholder="区+镇/街道+村/小区，请尽量详细以便于匹配"/>
-      </el-form-item>
-      <el-form-item label="7、联系电话">
-        <el-input v-model="form.phone" placeholder="如无可不填" />
-      </el-form-item>
-      <el-form-item label="8、微信号">
-        <el-input v-model="form.wechat" placeholder="如无可不填" />
-      </el-form-item>
-      <el-form-item label="9、QQ号">
-        <el-input v-model="form.qq" placeholder="如无可不填" />
-      </el-form-item>
-      <el-form-item label="10、补习科目">
-        <el-checkbox-group v-model="form.need">
-          <el-checkbox v-for="item in ['语文', '数学', '英语', '物理', '化学', '生物', '历史', '政治', '地理']"
-            :key="item"
-            :label="item"
-            :value="item"
-          >
-          </el-checkbox>
-        </el-checkbox-group>
-      </el-form-item>
-      <el-form-item label="11、补习时间">
-        <el-input v-model="form.period" placeholder="周末或晚上或可协商等" />
-      </el-form-item>
-      <el-form-item label="12、学员当前科目成绩">
-        <el-input v-model="form.score" placeholder="如分数排名等，便于教学指定适宜教学方案" />
-      </el-form-item>
-      <el-form-item label="13、教员要求">
-        <el-input v-model="form.remark" placeholder="如性别性格等，如无可不填" />
-      </el-form-item>
-      <el-form-item label="14、请问是云汉负责人让您填写的问卷吗">
-        <el-radio-group v-model="form.yunhan">
-          <el-radio value="true" size="large">是</el-radio>
-          <el-radio value="false" size="large">否</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="15、通过何种方式获知云汉">
-        <el-select
-          v-model="form.source"
-          size="large"
-          placeholder="请选择"
-        >
-          <el-option
-            v-for="item in ['传单', '亲友', '微信', '回头客']"
-            :key="item"
-            :label="item"
-            :value="item"
-          />
-        </el-select>
-    </el-form-item>
-    </el-form>
-    <el-button  type="primary" class="submit" @click="submit()">提交</el-button>
-    <el-dialog v-model="dialogVisible"  width="70%" top="38vh">
-      <span>是否确认提交</span>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button @click="commit()">提交</el-button>
-        </div>
-      </template>
-    </el-dialog>
-  </div>
+  <main class="student-register">
+    <section class="register-hero">
+      <p class="eyebrow">云汉教育 · 第 {{ stage }} 期</p>
+      <h1>学员报名</h1>
+      <p class="hero-desc">请准确填写学习需求与联系方式，便于后续进行教员匹配与沟通确认。</p>
+    </section>
+
+    <el-card v-if="!isSubmitted" class="register-card" shadow="never">
+      <el-steps :active="activeStep" finish-status="success" align-center class="steps">
+        <el-step v-for="step in steps" :key="step.title" :title="step.title" :description="step.description" />
+      </el-steps>
+
+      <el-form :model="form" label-position="top" class="register-form">
+        <section v-show="activeStep === 0" class="step-panel">
+          <h2>基本信息</h2>
+          <p class="section-desc">这些信息将用于确认学员情况与可服务区域。</p>
+          <div class="form-grid">
+            <el-form-item label="姓名">
+              <el-input v-model="form.name" placeholder="请输入学员姓名" />
+            </el-form-item>
+            <el-form-item label="性别">
+              <el-radio-group v-model="form.sex">
+                <el-radio value="男" size="large">男</el-radio>
+                <el-radio value="女" size="large">女</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="年级">
+              <el-select v-model="form.grade" placeholder="请选择年级" size="large">
+                <el-option v-for="item in STUDENT_GRADES" :key="item" :label="item" :value="item" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="选课方向">
+              <el-input v-model="form.subject" placeholder="非高中生无需填写" />
+            </el-form-item>
+            <el-form-item label="就读学校">
+              <el-input v-model="form.school" placeholder="当前就读学校" />
+            </el-form-item>
+            <el-form-item label="详细住址">
+              <el-input v-model="form.address" placeholder="区+镇/街道+村/小区，请尽量详细" />
+            </el-form-item>
+          </div>
+        </section>
+
+        <section v-show="activeStep === 1" class="step-panel">
+          <h2>学习需求</h2>
+          <p class="section-desc">越具体的信息，越有助于匹配合适的教员。</p>
+          <el-form-item label="补习科目">
+            <el-checkbox-group v-model="form.need" class="choice-group">
+              <el-checkbox v-for="item in SUBJECTS" :key="item" :label="item" :value="item" />
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="补习时间">
+            <el-input v-model="form.period" placeholder="例如：周末、晚上、可协商等" />
+          </el-form-item>
+          <el-form-item label="学员当前科目成绩">
+            <el-input v-model="form.score" placeholder="例如：分数、排名、薄弱点等" />
+          </el-form-item>
+          <el-form-item label="教员要求">
+            <el-input v-model="form.remark" placeholder="例如：性别、性格、教学风格等；如无可不填" />
+          </el-form-item>
+        </section>
+
+        <section v-show="activeStep === 2" class="step-panel">
+          <h2>联系方式</h2>
+          <p class="section-desc">电话、微信、QQ 至少填写一项，便于编委后续联系。</p>
+          <div class="form-grid">
+            <el-form-item label="联系电话">
+              <el-input v-model="form.phone" placeholder="如无可不填" />
+            </el-form-item>
+            <el-form-item label="微信号">
+              <el-input v-model="form.wechat" placeholder="如无可不填" />
+            </el-form-item>
+            <el-form-item label="QQ号">
+              <el-input v-model="form.qq" placeholder="如无可不填" />
+            </el-form-item>
+            <el-form-item label="请问是云汉负责人让您填写的问卷吗">
+              <el-radio-group v-model="form.yunhan">
+                <el-radio value="true" size="large">是</el-radio>
+                <el-radio value="false" size="large">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="通过何种方式获知云汉">
+              <el-select v-model="form.source" size="large" placeholder="请选择">
+                <el-option v-for="item in STUDENT_SOURCES" :key="item" :label="item" :value="item" />
+              </el-select>
+            </el-form-item>
+          </div>
+        </section>
+
+        <section v-show="activeStep === 3" class="step-panel">
+          <h2>确认提交</h2>
+          <p class="section-desc">请核对以下信息，确认无误后提交。</p>
+          <div class="summary-list">
+            <article v-for="group in summaryGroups" :key="group.title" class="summary-card">
+              <h3>{{ group.title }}</h3>
+              <dl>
+                <template v-for="[label, value] in group.items" :key="label">
+                  <dt>{{ label }}</dt>
+                  <dd>{{ value }}</dd>
+                </template>
+              </dl>
+            </article>
+          </div>
+        </section>
+      </el-form>
+
+      <div class="actions">
+        <el-button v-if="activeStep > 0" @click="prevStep()">上一步</el-button>
+        <el-button v-if="activeStep < steps.length - 1" type="primary" @click="nextStep()">下一步</el-button>
+        <el-button v-else type="primary" @click="commit()">确认提交</el-button>
+      </div>
+    </el-card>
+
+    <el-card v-else class="success-card" shadow="never">
+      <el-tag type="success" size="large">提交成功</el-tag>
+      <h2>我们已收到你的报名信息</h2>
+      <p>编委会根据填写内容进行初步整理，并在后续安排中联系确认。</p>
+      <el-button type="primary" @click="goHome()">返回首页</el-button>
+    </el-card>
+  </main>
 </template>
 
 <style scoped>
-.title {
+.student-register {
+  min-height: 100vh;
+  padding: 42px 16px 56px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.1), transparent 32%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  color: #0f172a;
+}
+
+.register-hero {
+  max-width: 760px;
+  margin: 0 auto 28px;
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.register-hero h1 {
+  margin: 0;
+  color: #111827;
+  font-size: 40px;
+  line-height: 1.2;
+}
+
+.hero-desc,
+.section-desc {
+  color: #64748b;
+  line-height: 1.7;
+}
+
+.register-card,
+.success-card {
+  max-width: 860px;
+  margin: 0 auto;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 24px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+}
+
+.steps {
+  padding: 8px 0 30px;
+}
+
+.register-form {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.step-panel h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 18px;
+}
+
+.choice-group {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.summary-list {
+  display: grid;
+  gap: 16px;
+}
+
+.summary-card {
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+.summary-card h3 {
+  margin: 0 0 14px;
+  color: #1e293b;
+}
+
+.summary-card dl {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 10px 16px;
+  margin: 0;
+}
+
+.summary-card dt {
+  color: #64748b;
+}
+
+.summary-card dd {
+  margin: 0;
+  color: #0f172a;
+  word-break: break-word;
+}
+
+.actions {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100vw;
-  margin: 20px 0;
-  font-weight: bold;
-  color: #409eff;
+  justify-content: flex-end;
+  gap: 12px;
+  max-width: 720px;
+  margin: 28px auto 0;
 }
-.form, .submit {
-  width: 90vw;
-  margin-left: 4vw;
+
+.success-card {
+  max-width: 520px;
+  padding: 28px;
+  text-align: center;
 }
-.submit {
-  margin-bottom: 4vw;
-  max-width: 600px;
+
+.success-card h2 {
+  margin: 20px 0 10px;
+}
+
+.success-card p {
+  margin-bottom: 24px;
+  color: #64748b;
+  line-height: 1.7;
+}
+
+@media (max-width: 768px) {
+  .student-register {
+    padding-top: 28px;
+  }
+
+  .register-hero h1 {
+    font-size: 32px;
+  }
+
+  .register-card {
+    border-radius: 18px;
+  }
+
+  .steps {
+    display: none;
+  }
+
+  .form-grid,
+  .choice-group {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card dl {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .actions .el-button {
+    width: 100%;
+    margin-left: 0;
+  }
 }
 </style>

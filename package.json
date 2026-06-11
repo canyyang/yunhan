@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^1.7.9",
+    "echarts": "^6.1.0",
     "element-plus": "^2.9.0",
     "pushstate-server": "^3.1.0",
     "vue": "^3.5.13",

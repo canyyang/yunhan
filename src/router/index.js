@@ -1,47 +1,55 @@
-//从下载的vue-router中导入createRouter
 import { createRouter, createWebHistory } from "vue-router"
-import Home from "@/views/Home.vue"
 
-//配置映射关系
 const routes = [
   {
-    path:"/",
-    component: () => import("@/views/Home.vue")
+    path: "/",
+    component: () => import("@/views/Home.vue"),
   },
   {
-    path:"/admin",
-    component: () => import("@/views/Admin.vue")
+    path: "/admin",
+    component: () => import("@/views/admin/Dashboard.vue"),
+  },
+  {
+    path: "/admin/students",
+    component: () => import("@/views/admin/Students.vue"),
+  },
+  {
+    path: "/admin/students/:id",
+    component: () => import("@/views/admin/StudentDetail.vue"),
+  },
+  {
+    path: "/admin/teachers",
+    component: () => import("@/views/admin/Teachers.vue"),
   },
   {
     path: "/public",
-    component: () => import("@/views/Public.vue")
+    component: () => import("@/views/Public.vue"),
   },
   {
     path: "/teacher",
-    component: () => import("@/views/Teacher.vue")
+    component: () => import("@/views/Teacher.vue"),
   },
   {
     path: "/student",
-    component: () => import("@/views/Student.vue")
+    component: () => import("@/views/Student.vue"),
   },
   {
     path: "/detail/:id",
-    component: () => import("@/views/Detail.vue")
+    redirect: (to) => `/admin/students/${to.params.id}`,
   },
   {
     path: "/teachers",
-    component: () => import("@/views/Teachers.vue")
+    redirect: "/admin/teachers",
   },
   {
     path: "/login",
-    component: () => import("@/views/Login.vue")
+    component: () => import("@/views/Login.vue"),
   },
 ]
 
-//创建路由对象
 const router = createRouter({
   routes,
-  history:createWebHistory()
+  history: createWebHistory(),
 })
 
 export default router

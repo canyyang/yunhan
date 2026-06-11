@@ -1,80 +1,128 @@
 <script setup>
 import { ref } from 'vue'
-import { ElCard, ElInput, ElButton, ElMessage } from 'element-plus'
-import { login } from '../services'
+import { ElButton, ElCard, ElInput, ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { login } from '@/services'
 
 const router = useRouter()
-
 const password = ref('')
+const loading = ref(false)
 
 const submit = async () => {
-  const res = await login(password.value)
-  if (res.code === 500) {
-    ElMessage({
-      message: res.msg,
-      type: 'error',
-    })
+  if (!password.value) {
+    ElMessage({ message: '请输入密码', type: 'warning' })
     return
   }
-  if (res.code === 200) {
-    ElMessage({
-      message: res.msg,
-      type: 'success',
-    })
-    const { token } =  res.data
-    localStorage.setItem('token', token)
-    setTimeout(() => {
-      router.push({
-        path: '/admin'
-      })
-    }, 500)
+
+  loading.value = true
+  try {
+    const res = await login(password.value)
+    if (res.code === 500) {
+      ElMessage({ message: res.msg, type: 'error' })
+      return
+    }
+    if (res.code === 200) {
+      const { token } = res.data
+      localStorage.setItem('token', token)
+      ElMessage({ message: res.msg, type: 'success' })
+      router.push({ path: '/admin' })
+    }
+  } finally {
+    loading.value = false
   }
 }
 </script>
 
 <template>
-  <div class="container">
-    <el-card class="card">
-      <h2 class="title">云汉教育</h2>
-      <el-input v-model="password" type="password" class="input" placeholder="请输入密码" />
-      <el-button type="primary"  class="button" @click="submit()">确认</el-button>
+  <main class="login-page">
+    <section class="intro">
+      <p>YUNHAN ADMIN</p>
+      <h1>欢迎回到云汉魔法管理台</h1>
+      <span>分院、匹配与公开流程，都从这里开始。</span>
+    </section>
+
+    <el-card class="login-card" shadow="never">
+      <h2>管理员门禁</h2>
+      <p>请输入管理密码以进入工作台。</p>
+      <el-input
+        v-model="password"
+        type="password"
+        show-password
+        class="input"
+        placeholder="请输入密码"
+        @keyup.enter="submit()"
+      />
+      <el-button type="primary" class="button" :loading="loading" @click="submit()">进入工作台</el-button>
     </el-card>
-  </div>
+  </main>
 </template>
 
 <style scoped>
-.container {
-  display: flex;
-  justify-content: center;
+.login-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 42px;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
-  background-color: #f5f5f5;
-}
-.card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+  min-height: 100vh;
+  padding: 48px clamp(20px, 8vw, 120px);
   box-sizing: border-box;
-  padding: 7px 30px;
-  width: 320px;
-  height: 220px;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(250, 204, 21, 0.18), transparent 28%),
+    radial-gradient(circle at 75% 18%, rgba(37, 99, 235, 0.18), transparent 26%),
+    linear-gradient(145deg, #0f172a 0%, #111827 55%, #1f2937 100%);
+  color: #f8fafc;
 }
-.title {
-  width: 260px;
-  height: 14px;
-  line-height: 14px;
-  text-align: center;
-  color: #409eff;
+
+.intro p {
+  color: #facc15;
+  font-weight: 800;
+  letter-spacing: 0.12em;
 }
-.input {
-  width: 260px;
+
+.intro h1 {
+  max-width: 620px;
+  margin: 0;
+  font-size: clamp(36px, 6vw, 64px);
+  line-height: 1.08;
+}
+
+.intro span {
+  display: block;
+  margin-top: 22px;
+  color: #cbd5e1;
+  font-size: 18px;
+}
+
+.login-card {
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+}
+
+.login-card h2 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.login-card p {
+  margin: 10px 0 24px;
+  color: #64748b;
+}
+
+.input,
+.button {
+  width: 100%;
+}
+
+.button {
   margin-top: 18px;
 }
-.button {
-  width: 260px;
-  margin-top: 26px;
+
+@media (max-width: 820px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

@@ -1,152 +1,66 @@
 import axios from "./axios"
 
+async function unwrapData(promise) {
+  const res = await promise
+  return res.data
+}
+
 export async function login(password) {
-  try {
-    const res = await axios.post('/login', {
-      password: password
-    })
-    console.log(res)
-    return res;
-  } catch (error) {
-    console.error("网络异常", error);
-    throw error;
-  }
+  return axios.post('/login', { password })
 }
 
 export async function getStudentList(formInline, pageNum) {
-  try {
-    const res = await axios.post('/student/get', {
-      filter: formInline,
-      pageNum: pageNum
-    })
-    return res.data;
-  } catch (error) {
-    console.error("网络异常", error);
-    throw error;
-  }
+  return unwrapData(axios.post('/student/get', {
+    filter: formInline,
+    pageNum,
+  }))
 }
 
 export async function getStudentDetail(id) {
-  try {
-    const res = await axios.get(`/student/getDetail?id=${id}`);
-    return res.data;
-  } catch (error) {
-    console.error("网络异常", error);
-    throw error;
-  }
+  return unwrapData(axios.get(`/student/getDetail?id=${id}`))
 }
 
 export async function getPublicStudent() {
-  try {
-    const res = await axios.get('/student/public');
-    return res.data;
-  } catch (error) {
-    console.error("网络异常", error);
-    throw error;
-  }
+  return unwrapData(axios.get('/student/public'))
 }
 
-
-
 export async function getTeacherList(formInline, pageNum) {
-  try {
-    const res = await axios.post('/teacher/get', {
-      filter: formInline,
-      pageNum: pageNum
-    });
-    return res.data;
-  } catch (error) {
-    console.error("网络异常", error);
-    throw error;
-  }
+  return unwrapData(axios.post('/teacher/get', {
+    filter: formInline,
+    pageNum,
+  }))
 }
 
 export async function getTeacherDetail(id) {
-  try {
-    const res = await axios.get(`/teacher/getDetail?id=${id}`);
-    return res.data;
-  } catch (error) {
-    console.error("网络异常", error);
-    throw error;
-  }
+  return unwrapData(axios.get(`/teacher/getDetail?id=${id}`))
 }
 
 export async function deleteTeacher(data) {
   const { id } = data
-  try {
-    const res = await axios.get(`/teacher/delete?id=${id}`);
-    console.log(res)
-    return res.data;
-  } catch (error) {
-    console.error("网络异常", error);
-    throw error;
-  }
+  return unwrapData(axios.get(`/teacher/delete?id=${id}`))
 }
 
 export async function addTeacher(data) {
-  return axios.post('/teacher/add', data)
-    .then((res) => {
-      return res.data;
-    })
-    .catch((error) => {
-      console.error("网络异常", error);
-      throw error;
-    });
+  return unwrapData(axios.post('/teacher/add', data))
 }
 
 export async function addStudent(data) {
-  return axios.post('/student/add', data)
-    .then((res) => {
-      return res.data;
-    })
-    .catch((error) => {
-      console.error("网络异常", error);
-      throw error;
-    });
+  return unwrapData(axios.post('/student/add', data))
 }
 
 export async function publicStudent(data) {
-  return axios.post('/student/setPublic', data)
-    .then((res) => {
-      return res.data;
-    })
-    .catch((error) => {
-      console.error("网络异常", error);
-      throw error;
-    });
+  return unwrapData(axios.post('/student/setPublic', data))
 }
 
 export async function deleteStudent(data) {
   const { id } = data
-  try {
-    const res = await axios.get(`/student/delete?id=${id}`);
-    return res.data;
-  } catch (error) {
-    console.error("网络异常", error);
-    throw error;
-  }
+  return unwrapData(axios.get(`/student/delete?id=${id}`))
 }
 
 export async function editCharge(data) {
-  return axios.post('/student/edit/charge', data)
-    .then((res) => {
-      return res.data;
-    })
-    .catch((error) => {
-      console.error("网络异常", error);
-      throw error;
-    });
+  return unwrapData(axios.post('/student/edit/charge', data))
 }
 
 export async function chargeStudent(data) {
-  console.log(data)
-  return axios.post('/student/edit/teacher', data)
-    .then((res) => {
-      return res.data;
-    })
-    .catch((error) => {
-      console.error("网络异常", error);
-      throw error;
-    });
+  return unwrapData(axios.post('/student/edit/teacher', data))
 }
-
