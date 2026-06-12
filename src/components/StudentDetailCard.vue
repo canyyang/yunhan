@@ -101,6 +101,9 @@ onBeforeUnmount(() => {
     >
       {{ student.score }}
     </el-descriptions-item>
+    <el-descriptions-item label="区域" width="77vw" align="center" label-align="center" span="2">
+      {{ student.area || '未填写' }}
+    </el-descriptions-item>
     <el-descriptions-item label="地址" width="77vw" align="center" label-align="center" span="2">
       {{ student.address }}
     </el-descriptions-item>

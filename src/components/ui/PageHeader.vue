@@ -13,76 +13,87 @@ defineProps({
 
 <template>
   <header class="page-header">
-    <div>
-      <p class="eyebrow">YUNHAN ADMIN</p>
-      <h1>{{ title }}</h1>
+    <div class="page-header-content">
+      <div class="page-header-title-row">
+        <h1>{{ title }}</h1>
+        <div v-if="$slots.actions" class="actions">
+          <slot name="actions"></slot>
+        </div>
+      </div>
       <p v-if="description">{{ description }}</p>
-    </div>
-    <div class="actions">
-      <slot name="actions"></slot>
     </div>
   </header>
 </template>
 
 <style scoped>
 .page-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 18px;
-  align-items: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  padding: 18px 22px;
+  border: 1px solid var(--yh-admin-header-border);
+  border-radius: var(--yh-admin-radius);
+  background: linear-gradient(135deg, #ecf5ff 0%, #f8fbff 55%, #ffffff 100%);
+  box-shadow: 0 4px 14px rgba(64, 158, 255, 0.06);
 }
 
-.eyebrow {
-  margin: 0 0 8px;
-  color: var(--yh-admin-primary);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+.page-header-content {
+  min-width: 0;
+}
+
+.page-header-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
 }
 
 h1 {
   margin: 0;
-  color: #0f172a;
-  font-size: 30px;
+  color: #303133;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 p {
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   color: var(--yh-admin-muted);
-  line-height: 1.7;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
   .page-header {
-    flex-direction: column;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+
+  .page-header-title-row {
+    align-items: flex-start;
     gap: 12px;
-    margin-bottom: 14px;
   }
 
   h1 {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   p {
     margin-top: 6px;
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .actions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .actions :deep(.el-button) {
-    width: 100%;
     margin-left: 0;
   }
 }

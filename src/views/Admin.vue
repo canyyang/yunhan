@@ -167,10 +167,10 @@ const formInline = reactive({ ...defaultFormInline })
           </template>
         </el-table-column>
         <el-table-column prop="teacher" label="教员" min-width="70" />
-        <el-table-column prop="need" label="科目" min-width="80" show-overflow-tooltip />
+        <el-table-column prop="need" label="科目" min-width="80" show-overflow-tooltip class-name="yh-cell-ellipsis" label-class-name="yh-cell-ellipsis" />
         <el-table-column prop="sex" label="性别" min-width="50" />
         <el-table-column prop="grade" label="年级" min-width="60" />
-        <el-table-column prop="address" show-overflow-tooltip label="地址" min-width="100" />
+        <el-table-column prop="address" show-overflow-tooltip label="地址" min-width="100" class-name="yh-cell-ellipsis" label-class-name="yh-cell-ellipsis" />
         <el-table-column fixed="right" label="操作" min-width="90">
           <template #default="{ row }">
             <el-button

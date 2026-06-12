@@ -9,6 +9,10 @@ export async function login(password) {
   return axios.post('/login', { password })
 }
 
+export async function getAdminDataset() {
+  return unwrapData(axios.get('/admin/dataset', { timeout: 30000 }))
+}
+
 export async function getStudentList(formInline, pageNum) {
   return unwrapData(axios.post('/student/get', {
     filter: formInline,

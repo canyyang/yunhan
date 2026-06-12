@@ -52,7 +52,7 @@ const submit = async () => {
         placeholder="请输入密码"
         @keyup.enter="submit()"
       />
-      <el-button type="primary" class="button" :loading="loading" @click="submit()">进入工作台</el-button>
+      <el-button type="primary" class="button" :loading="loading" @click="submit()">进入数据概览</el-button>
     </el-card>
   </main>
 </template>

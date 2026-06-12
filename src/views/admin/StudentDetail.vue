@@ -8,7 +8,8 @@ import StatusBadge from '@/components/ui/StatusBadge.vue'
 import HouseBadge from '@/components/ui/HouseBadge.vue'
 import StudentDetailCard from '@/components/StudentDetailCard.vue'
 import Teachers from '@/components/Teachers.vue'
-import { deleteStudent, getStudentDetail, publicStudent } from '@/services'
+import { useAdminDataset } from '@/composables/useAdminDataset'
+import { deleteStudent, publicStudent } from '@/services'
 import { charge } from '@/utils'
 
 const router = useRouter()
@@ -18,11 +19,24 @@ const loading = ref(false)
 const dialogConfirmVisible = ref(false)
 const isDelete = ref(true)
 
+const { ensureDataset, fetchDataset, getStudentById } = useAdminDataset()
+
+function loadStudent() {
+  const student = getStudentById(route.params.id)
+  if (!student) {
+    ElMessage({ message: '未找到该学员', type: 'warning' })
+    router.push({ path: '/admin/students' })
+    return false
+  }
+  Object.assign(detailData, student)
+  return true
+}
+
 async function fetchData() {
   loading.value = true
   try {
-    const data = await getStudentDetail(route.params.id)
-    Object.assign(detailData, data)
+    await ensureDataset()
+    loadStudent()
   } catch (err) {
     ElMessage({ message: '加载失败，请稍后重试', type: 'error' })
   } finally {
@@ -31,17 +45,19 @@ async function fetchData() {
 }
 
 const deleteSelectStudent = async () => {
-  const successFn = () => {
+  const successFn = async () => {
     dialogConfirmVisible.value = false
+    await fetchDataset(true)
     router.push({ path: '/admin/students' })
   }
   charge('删除中', { id: route.params.id }, deleteStudent, '删除成功', successFn)
 }
 
 const publicSelectStudent = async () => {
-  const successFn = () => {
+  const successFn = async () => {
     dialogConfirmVisible.value = false
-    fetchData()
+    await fetchDataset(true)
+    loadStudent()
   }
   charge('修改中', { id: route.params.id, isPublic: !detailData.isPublic }, publicStudent, '修改成功', successFn)
 }
@@ -54,11 +70,17 @@ const editStudent = () => {
   }
 }
 
+const handleChargeChange = async () => {
+  await fetchDataset(true)
+  loadStudent()
+}
+
 const copySummary = async () => {
   const text = [
     `学员编号：${detailData.id}`,
     `姓名：${detailData.name}`,
     `年级：${detailData.grade}`,
+    `区域：${detailData.area || '未填写'}`,
     `科目：${detailData.need}`,
     `时间：${detailData.period}`,
     `地址：${detailData.address}`,
@@ -121,10 +143,10 @@ onMounted(() => {
 
     <section v-if="detailData.id" class="admin-section admin-card recommend-card">
       <div class="recommend-head">
-        <h3>推荐魔法导师</h3>
-        <p>根据科目、年级、地区与当前带生数量计算前端匹配度。</p>
+        <h3>推荐教员</h3>
+        <p>展示全部教员并按匹配度排序，区域一致等条件会在匹配分中体现。</p>
       </div>
-      <Teachers :student="detailData.id" :student-detail="detailData" @chargeChange="fetchData()" :edit="true" />
+      <Teachers :student="detailData.id" :student-detail="detailData" @chargeChange="handleChargeChange()" :edit="true" />
     </section>
 
     <el-dialog v-model="dialogConfirmVisible" top="30vh" width="360">

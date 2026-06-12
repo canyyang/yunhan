@@ -1,16 +1,11 @@
 <script setup>
-import { computed, reactive, ref } from 'vue'
-import { ElButton, ElCard, ElEmpty, ElInput, ElMessage, ElOption, ElSelect, ElTag } from 'element-plus'
-import { SUBJECTS, STUDENT_GRADES } from '@/constants'
+import { ElButton, ElEmpty, ElMessage, ElTag } from 'element-plus'
 import { getPublicStudent } from '@/services'
+import { sortByCurrentStageFirst } from '@/utils'
+import { reactive, ref } from 'vue'
 
 const publicList = reactive([])
 const loading = ref(false)
-const filters = reactive({
-  subject: '',
-  grade: '',
-  keyword: '',
-})
 
 const normalizeList = (value) => {
   if (Array.isArray(value)) return value
@@ -21,28 +16,11 @@ const normalizeList = (value) => {
     .filter(Boolean)
 }
 
-const filteredList = computed(() => {
-  const keyword = filters.keyword.trim().toLowerCase()
-
-  return publicList.filter((item) => {
-    const needs = normalizeList(item.need)
-    const matchSubject = !filters.subject || needs.includes(filters.subject)
-    const matchGrade = !filters.grade || item.grade === filters.grade
-    const matchKeyword =
-      !keyword ||
-      [item.id, item.address, item.period, item.remark]
-        .filter(Boolean)
-        .some((value) => String(value).toLowerCase().includes(keyword))
-
-    return matchSubject && matchGrade && matchKeyword
-  })
-})
-
 const fetchData = async () => {
   loading.value = true
   try {
     const data = await getPublicStudent()
-    publicList.splice(0, publicList.length, ...data)
+    publicList.splice(0, publicList.length, ...sortByCurrentStageFirst(data))
   } catch (err) {
     ElMessage({
       message: '加载失败，请稍后重试',
@@ -51,12 +29,6 @@ const fetchData = async () => {
   } finally {
     loading.value = false
   }
-}
-
-const resetFilters = () => {
-  filters.subject = ''
-  filters.grade = ''
-  filters.keyword = ''
 }
 
 const copyText = async (text) => {
@@ -100,29 +72,13 @@ fetchData()
     <section class="board-hero">
       <p class="eyebrow">云汉教育</p>
       <h1>待接学员信息栏</h1>
-      <p>如有合适学员，请复制学员编号后私聊编委对接。公开信息不包含联系方式。</p>
+      <p>如有合适学员，请复制学员编号后私聊编委对接。</p>
     </section>
 
-    <el-card class="filter-card" shadow="never">
-      <div class="filters">
-        <el-select v-model="filters.subject" clearable placeholder="按科目筛选">
-          <el-option v-for="item in SUBJECTS" :key="item" :label="item" :value="item" />
-        </el-select>
-        <el-select v-model="filters.grade" clearable placeholder="按年级筛选">
-          <el-option v-for="item in STUDENT_GRADES" :key="item" :label="item" :value="item" />
-        </el-select>
-        <el-input v-model="filters.keyword" clearable placeholder="搜索地址、时间或编号" />
-        <el-button @click="resetFilters()">重置</el-button>
-      </div>
-      <p class="filter-meta">
-        共 {{ publicList.length }} 位待接学员，当前显示 {{ filteredList.length }} 位
-      </p>
-    </el-card>
-
-    <el-empty v-if="!loading && filteredList.length === 0" description="暂无匹配的待接学员" />
+    <el-empty v-if="!loading && publicList.length === 0" description="暂无待接学员" />
 
     <section v-else class="student-grid">
-      <article v-for="item in filteredList" :key="item.id" class="student-card">
+      <article v-for="item in publicList" :key="item.id" class="student-card">
         <header class="card-header">
           <div>
             <span class="id-label">学员编号</span>
@@ -134,6 +90,7 @@ fetchData()
         <div class="tag-row">
           <el-tag type="primary" effect="plain">{{ item.grade }}</el-tag>
           <el-tag type="info" effect="plain">{{ item.sex }}</el-tag>
+          <el-tag v-if="item.area" type="success" effect="plain">{{ item.area }}</el-tag>
           <el-tag v-for="subject in normalizeList(item.need)" :key="subject" effect="plain">
             {{ subject }}
           </el-tag>
@@ -145,7 +102,7 @@ fetchData()
           <dt v-if="item.subject">选科方向</dt>
           <dd v-if="item.subject">{{ item.subject }}</dd>
           <dt>所在区域</dt>
-          <dd>{{ item.address }}</dd>
+          <dd>{{ item.area || item.address || '暂未填写' }}</dd>
           <dt v-if="item.score">当前水平</dt>
           <dd v-if="item.score">{{ item.score }}</dd>
           <dt v-if="item.remark">教员要求</dt>
@@ -194,27 +151,6 @@ fetchData()
   max-width: 640px;
   color: #64748b;
   line-height: 1.7;
-}
-
-.filter-card {
-  max-width: 860px;
-  margin: 0 auto 24px;
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 20px;
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
-}
-
-.filters {
-  display: grid;
-  grid-template-columns: 1fr 1fr minmax(220px, 1.4fr) auto;
-  gap: 12px;
-  align-items: center;
-}
-
-.filter-meta {
-  margin: 14px 0 0;
-  color: #64748b;
-  font-size: 14px;
 }
 
 .student-grid {
@@ -296,10 +232,6 @@ fetchData()
 
   .board-hero h1 {
     font-size: 30px;
-  }
-
-  .filters {
-    grid-template-columns: 1fr;
   }
 
   .student-grid {

@@ -20,6 +20,7 @@ import { useRouter } from 'vue-router'
 import { addTeacher } from '@/services'
 import { getStage } from '@/utils'
 import { AREAS, TEACHER_SUBJECTS, TEACH_GRADES } from '@/constants'
+import '@/styles/form-page.css'
 
 const router = useRouter()
 const stage = getStage()
@@ -54,11 +55,16 @@ const form = reactive(loadDraft())
 const activeStep = ref(0)
 const isSubmitted = ref(false)
 
-const steps = ['身份登记', '教学能力', '服务范围', '确认入库']
+const steps = [
+  { title: '基本信息', description: '填写身份与住址' },
+  { title: '教学能力', description: '选择科目与授课年级' },
+  { title: '服务范围', description: '填写地区与联系方式' },
+  { title: '确认提交', description: '核对信息后提交' },
+]
 
 const summaryGroups = computed(() => [
   {
-    title: '身份信息',
+    title: '基本信息',
     items: [
       ['姓名', form.name],
       ['性别', form.sex],
@@ -128,8 +134,8 @@ const commit = async () => {
 
   const loading = ElLoading.service({
     lock: true,
-    text: '登记魔法导师中',
-    background: 'rgba(15, 23, 42, 0.7)',
+    text: '提交中',
+    background: 'rgba(255, 255, 255, 0.65)',
   })
 
   try {
@@ -151,24 +157,25 @@ const commit = async () => {
 </script>
 
 <template>
-  <main class="teacher-register">
-    <section class="hero">
-      <p class="eyebrow">云汉第 {{ stage }} 期 · 魔法导师招募</p>
-      <h1>加入云汉教员库</h1>
-      <p>填写你的教学能力与服务范围，后续将由编委根据学员需求进行匹配。</p>
+  <main class="form-register-page">
+    <section class="form-register-hero">
+      <p class="eyebrow">云汉教育 · 第 {{ stage }} 期</p>
+      <h1>教员登记</h1>
+      <p class="hero-desc">请如实填写教学能力与联系方式，便于后续与学员需求进行匹配。</p>
     </section>
 
-    <el-card v-if="!isSubmitted" class="register-card" shadow="never">
-      <el-steps :active="activeStep" finish-status="success" align-center>
-        <el-step v-for="step in steps" :key="step" :title="step" />
+    <el-card v-if="!isSubmitted" class="form-register-card" shadow="never">
+      <el-steps :active="activeStep" finish-status="success" align-center class="form-register-steps">
+        <el-step v-for="step in steps" :key="step.title" :title="step.title" :description="step.description" />
       </el-steps>
 
-      <el-form :model="form" label-position="top" class="form">
-        <section v-show="activeStep === 0" class="panel">
-          <h2>身份登记</h2>
-          <div class="grid">
+      <el-form :model="form" label-position="top" class="form-register-form">
+        <section v-show="activeStep === 0" class="form-register-panel">
+          <h2>基本信息</h2>
+          <p class="section-desc">这些信息将用于确认教员身份与服务区域。</p>
+          <div class="form-register-grid">
             <el-form-item label="姓名">
-              <el-input v-model="form.name" />
+              <el-input v-model="form.name" placeholder="请输入姓名" />
             </el-form-item>
             <el-form-item label="性别">
               <el-radio-group v-model="form.sex">
@@ -188,15 +195,16 @@ const commit = async () => {
           </div>
         </section>
 
-        <section v-show="activeStep === 1" class="panel">
+        <section v-show="activeStep === 1" class="form-register-panel">
           <h2>教学能力</h2>
+          <p class="section-desc">请选择可授科目与年级范围。</p>
           <el-form-item label="教学科目">
-            <el-checkbox-group v-model="form.subject" class="choice-grid">
+            <el-checkbox-group v-model="form.subject" class="form-register-choice">
               <el-checkbox v-for="item in TEACHER_SUBJECTS" :key="item" :label="item" :value="item" />
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="可接受的教学阶段">
-            <el-checkbox-group v-model="form.grade" class="choice-grid compact">
+            <el-checkbox-group v-model="form.grade" class="form-register-choice compact">
               <el-checkbox v-for="item in TEACH_GRADES" :key="item" size="large" :label="item" :value="item" />
             </el-checkbox-group>
           </el-form-item>
@@ -208,14 +216,15 @@ const commit = async () => {
           </el-form-item>
         </section>
 
-        <section v-show="activeStep === 2" class="panel">
+        <section v-show="activeStep === 2" class="form-register-panel">
           <h2>服务范围</h2>
+          <p class="section-desc">请选择可服务地区，并留下至少一种联系方式。</p>
           <el-form-item label="可接受的教学地区">
-            <el-checkbox-group v-model="form.area" class="choice-grid">
+            <el-checkbox-group v-model="form.area" class="form-register-choice">
               <el-checkbox v-for="item in AREAS" :key="item" size="large" :label="item" :value="item" />
             </el-checkbox-group>
           </el-form-item>
-          <div class="grid">
+          <div class="form-register-grid">
             <el-form-item label="联系电话">
               <el-input v-model="form.phone" placeholder="如无可不填" />
             </el-form-item>
@@ -231,10 +240,11 @@ const commit = async () => {
           </el-form-item>
         </section>
 
-        <section v-show="activeStep === 3" class="panel">
-          <h2>确认入库</h2>
-          <div class="summary-list">
-            <article v-for="group in summaryGroups" :key="group.title" class="summary-card">
+        <section v-show="activeStep === 3" class="form-register-panel">
+          <h2>确认提交</h2>
+          <p class="section-desc">请核对以下信息，确认无误后提交。</p>
+          <div class="form-register-summary-list">
+            <article v-for="group in summaryGroups" :key="group.title" class="form-register-summary-card">
               <h3>{{ group.title }}</h3>
               <dl>
                 <template v-for="[label, value] in group.items" :key="label">
@@ -247,166 +257,28 @@ const commit = async () => {
         </section>
       </el-form>
 
-      <div class="actions">
+      <div class="form-register-actions">
         <el-button v-if="activeStep > 0" @click="prevStep()">上一步</el-button>
         <el-button v-if="activeStep < steps.length - 1" type="primary" @click="nextStep()">下一步</el-button>
         <el-button v-else type="primary" @click="commit()">确认提交</el-button>
       </div>
     </el-card>
 
-    <el-card v-else class="success-card" shadow="never">
-      <el-tag type="success" size="large">登记成功</el-tag>
-      <h2>欢迎加入云汉教员库</h2>
-      <p>你的信息已进入编委匹配范围，后续如有合适学员会进行联系。</p>
+    <el-card v-else class="form-register-success" shadow="never">
+      <el-tag type="success" size="large">提交成功</el-tag>
+      <h2>我们已收到你的登记信息</h2>
+      <p>编委会将根据填写内容进行整理，如有合适学员会与你联系。</p>
       <el-button type="primary" @click="router.push('/')">返回首页</el-button>
     </el-card>
   </main>
 </template>
 
 <style scoped>
-.teacher-register {
-  min-height: 100vh;
-  padding: 42px 16px 56px;
-  box-sizing: border-box;
-  background:
-    radial-gradient(circle at 20% 0%, rgba(214, 166, 23, 0.2), transparent 26%),
-    radial-gradient(circle at 80% 10%, rgba(37, 99, 235, 0.18), transparent 24%),
-    linear-gradient(180deg, #0f172a 0%, #111827 54%, #1f2937 100%);
-  color: #e5e7eb;
+.form-register-panel + .form-register-panel {
+  margin-top: 0;
 }
 
-.hero {
-  max-width: 760px;
-  margin: 0 auto 28px;
-  text-align: center;
-}
-
-.eyebrow {
-  color: #facc15;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-}
-
-.hero h1 {
-  margin: 0;
-  font-size: 42px;
-}
-
-.hero p {
-  color: #cbd5e1;
-  line-height: 1.7;
-}
-
-.register-card,
-.success-card {
-  max-width: 900px;
-  margin: 0 auto;
-  border: 1px solid rgba(250, 204, 21, 0.18);
-  border-radius: 26px;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.28);
-}
-
-.form {
-  max-width: 740px;
-  margin: 30px auto 0;
-}
-
-.panel h2 {
-  margin: 0 0 18px;
-  color: #0f172a;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 18px;
-}
-
-.choice-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.choice-grid.compact {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.summary-list {
-  display: grid;
-  gap: 16px;
-}
-
-.summary-card {
-  padding: 18px;
-  border-radius: 18px;
-  background: #f8fafc;
-}
-
-.summary-card h3 {
-  margin: 0 0 12px;
-  color: #111827;
-}
-
-.summary-card dl {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 10px 16px;
-  margin: 0;
-  color: #0f172a;
-}
-
-.summary-card dt {
-  color: #64748b;
-}
-
-.summary-card dd {
-  margin: 0;
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  max-width: 740px;
-  margin: 28px auto 0;
-}
-
-.success-card {
-  max-width: 520px;
-  padding: 28px;
-  text-align: center;
-}
-
-.success-card h2 {
-  color: #0f172a;
-}
-
-.success-card p {
-  color: #64748b;
-  line-height: 1.7;
-}
-
-@media (max-width: 768px) {
-  .hero h1 {
-    font-size: 32px;
-  }
-
-  .grid,
-  .choice-grid,
-  .choice-grid.compact,
-  .summary-card dl {
-    grid-template-columns: 1fr;
-  }
-
-  .actions {
-    flex-direction: column-reverse;
-  }
-
-  .actions .el-button {
-    width: 100%;
-    margin-left: 0;
-  }
+.form-register-panel .section-desc {
+  margin: 8px 0 18px;
 }
 </style>

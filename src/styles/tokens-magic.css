@@ -1,19 +1,35 @@
 :root {
-  --yh-admin-bg: #0f172a;
-  --yh-admin-bg-soft: #111827;
+  --yh-admin-accent: #409eff;
+  --yh-admin-accent-dark: #337ecc;
+  --yh-admin-header-bg: #ecf5ff;
+  --yh-admin-header-border: #d9ecff;
+  --yh-admin-bg: #ffffff;
+  --yh-admin-bg-soft: #f5f7fa;
   --yh-admin-panel: #ffffff;
-  --yh-admin-page: #f1f5f9;
-  --yh-admin-text: #0f172a;
-  --yh-admin-muted: #64748b;
-  --yh-admin-border: rgba(148, 163, 184, 0.24);
-  --yh-admin-primary: #2563eb;
-  --yh-admin-primary-dark: #1d4ed8;
-  --yh-admin-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
-  --yh-admin-radius: 20px;
+  --yh-admin-page: #f5f7fa;
+  --yh-admin-text: #303133;
+  --yh-admin-muted: #909399;
+  --yh-admin-border: #e4e7ed;
+  --yh-admin-primary: #409eff;
+  --yh-admin-primary-dark: #337ecc;
+  --yh-admin-shadow: 0 6px 18px rgba(64, 158, 255, 0.08);
+  --yh-admin-radius: 12px;
+  --yh-admin-topbar-height: 56px;
+  --yh-admin-topbar-z: 1000;
   --yh-house-slytherin: #2a623d;
   --yh-house-gryffindor: #9c2d2f;
   --yh-house-ravenclaw: #0e1a8c;
   --yh-house-hufflepuff: #d6a617;
+}
+
+.admin-layout {
+  --el-color-primary: #409eff;
+  --el-color-primary-light-3: #79bbff;
+  --el-color-primary-light-5: #a0cfff;
+  --el-color-primary-light-7: #c6e2ff;
+  --el-color-primary-light-8: #d9ecff;
+  --el-color-primary-light-9: #ecf5ff;
+  --el-color-primary-dark-2: #337ecc;
 }
 
 .admin-card {
@@ -24,16 +40,70 @@
 }
 
 .admin-section {
-  margin-top: 20px;
+  margin-top: 16px;
+}
+
+.admin-layout .el-table {
+  --el-table-header-bg-color: #f5f9ff;
+  --el-table-header-text-color: #606266;
+  --el-table-border-color: #ebeef5;
+  border-radius: 8px;
+}
+
+.admin-layout .el-table th.el-table__cell {
+  font-weight: 600;
+  text-align: center;
+}
+
+.admin-layout .el-table th.el-table__cell .cell {
+  text-align: center;
+}
+
+.admin-layout .el-table td.el-table__cell {
+  text-align: center;
+}
+
+.admin-layout .el-table th.el-table__cell.yh-cell-ellipsis,
+.admin-layout .el-table td.el-table__cell.yh-cell-ellipsis {
+  text-align: left;
+}
+
+.admin-layout .el-table th.el-table__cell.yh-cell-ellipsis .cell {
+  text-align: left;
+}
+
+.admin-layout .el-table td.el-table__cell:not(.yh-cell-ellipsis) > .cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.admin-layout .el-table td.el-table__cell.yh-cell-ellipsis > .cell {
+  display: block;
+  text-align: left;
+}
+
+.admin-layout .pager-wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.admin-layout .pager-wrap .el-pagination {
+  --el-pagination-hover-color: var(--yh-admin-accent);
+  justify-content: center;
 }
 
 @media (max-width: 768px) {
   :root {
-    --yh-admin-radius: 16px;
-    --yh-admin-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+    --yh-admin-radius: 10px;
+    --yh-admin-shadow: 0 4px 12px rgba(64, 158, 255, 0.06);
   }
 
   .admin-section {
-    margin-top: 14px;
+    margin-top: 12px;
   }
 }

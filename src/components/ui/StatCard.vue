@@ -38,8 +38,8 @@ defineProps({
   content: '';
   position: absolute;
   inset: 0 auto 0 0;
-  width: 5px;
-  background: var(--tone-color, var(--yh-admin-primary));
+  width: 4px;
+  background: var(--tone-color, var(--yh-admin-accent));
 }
 
 .label {

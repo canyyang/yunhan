@@ -1,0 +1,182 @@
+:root {
+  /* 字体 */
+  --yh-font: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+
+  /* 全局中性色 */
+  --yh-text: #303133;
+  --yh-text-strong: #1f2937;
+  --yh-muted: #909399;
+  --yh-border: #e4e7ed;
+  --yh-page: #f5f7fa;
+  --yh-surface: #ffffff;
+
+  /* 管理端主色 */
+  --yh-admin-accent: #409eff;
+  --yh-admin-accent-dark: #337ecc;
+  --yh-admin-accent-soft: #79bbff;
+  --yh-admin-header-bg: #ecf5ff;
+  --yh-admin-header-border: #d9ecff;
+  --yh-admin-bg: #ffffff;
+  --yh-admin-bg-soft: #f5f7fa;
+  --yh-admin-panel: #ffffff;
+  --yh-admin-page: #f5f7fa;
+  --yh-admin-text: #303133;
+  --yh-admin-muted: #909399;
+  --yh-admin-border: #e4e7ed;
+  --yh-admin-primary: #409eff;
+  --yh-admin-primary-dark: #337ecc;
+  --yh-admin-shadow: 0 6px 18px rgba(64, 158, 255, 0.08);
+  --yh-admin-radius: 12px;
+  --yh-admin-radius-lg: 16px;
+  --yh-admin-topbar-height: 56px;
+  --yh-admin-topbar-z: 1000;
+
+  /* 公开页（与主色协调的 Slate 系） */
+  --yh-public-accent: #2563eb;
+  --yh-public-text: #1e293b;
+  --yh-public-muted: #64748b;
+  --yh-public-page: #f8fafc;
+  --yh-public-card-radius: 16px;
+
+  /* 学院色 */
+  --yh-house-slytherin: #2a623d;
+  --yh-house-gryffindor: #9c2d2f;
+  --yh-house-ravenclaw: #0e1a8c;
+  --yh-house-hufflepuff: #d6a617;
+  --yh-house-waiting: #606266;
+
+  /* 统计卡片强调色 */
+  --yh-stat-green: #16a34a;
+  --yh-stat-amber: #d97706;
+  --yh-stat-red: #dc2626;
+  --yh-stat-purple: #7c3aed;
+
+  /* 间距 */
+  --yh-gap: 16px;
+  --yh-gap-sm: 12px;
+  --yh-gap-xs: 8px;
+  --yh-section-gap: 16px;
+
+  /* 断点（文档用，媒体查询仍写死 px） */
+  --yh-bp-md: 768px;
+  --yh-bp-lg: 1024px;
+}
+
+.admin-layout {
+  --el-color-primary: var(--yh-admin-accent);
+  --el-color-primary-light-3: #79bbff;
+  --el-color-primary-light-5: #a0cfff;
+  --el-color-primary-light-7: #c6e2ff;
+  --el-color-primary-light-8: #d9ecff;
+  --el-color-primary-light-9: #ecf5ff;
+  --el-color-primary-dark-2: var(--yh-admin-accent-dark);
+}
+
+.admin-card {
+  border: 1px solid var(--yh-admin-border);
+  border-radius: var(--yh-admin-radius);
+  background: var(--yh-admin-panel);
+  box-shadow: var(--yh-admin-shadow);
+}
+
+.admin-section {
+  margin-top: var(--yh-section-gap);
+}
+
+.admin-filter-panel {
+  padding: 18px 20px 6px;
+}
+
+.admin-table-card {
+  padding: 8px 12px 16px;
+}
+
+.admin-layout .el-table {
+  --el-table-header-bg-color: #f5f9ff;
+  --el-table-header-text-color: #606266;
+  --el-table-border-color: #ebeef5;
+  border-radius: 8px;
+}
+
+.admin-layout .el-table th.el-table__cell {
+  font-weight: 600;
+}
+
+.admin-layout .pager-wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: var(--yh-gap);
+}
+
+.admin-layout .pager-wrap .el-pagination {
+  --el-pagination-hover-color: var(--yh-admin-accent);
+  justify-content: center;
+}
+
+.section-head h3 {
+  margin: 0;
+  color: var(--yh-admin-text);
+  font-size: 17px;
+}
+
+.section-head p {
+  margin: var(--yh-gap-xs) 0 0;
+  color: var(--yh-admin-muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --yh-admin-radius: 10px;
+    --yh-admin-shadow: 0 4px 12px rgba(64, 158, 255, 0.06);
+    --yh-admin-topbar-height: 52px;
+    --yh-section-gap: 12px;
+    --yh-gap: 12px;
+  }
+
+  .admin-filter-panel,
+  .admin-table-card {
+    padding: var(--yh-gap-sm);
+  }
+
+  .admin-layout .admin-table-scroll {
+    margin-left: -4px;
+    margin-right: -4px;
+    overflow-x: auto;
+  }
+
+  .admin-layout .el-table {
+    font-size: 13px;
+  }
+
+  .admin-layout .el-table .cell {
+    padding: 0 8px;
+  }
+
+  .admin-layout .el-dialog {
+    width: calc(100% - 28px) !important;
+  }
+
+  .admin-layout .el-drawer__body {
+    padding: 14px;
+  }
+
+  .admin-layout .el-drawer__footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--yh-gap-xs);
+    padding: var(--yh-gap-sm) 14px;
+  }
+
+  .admin-layout .el-drawer__footer .el-button {
+    width: 100%;
+    margin-left: 0 !important;
+  }
+
+  .admin-layout .el-descriptions__label,
+  .admin-layout .el-descriptions__content {
+    padding: 10px 8px !important;
+    word-break: break-word;
+  }
+}

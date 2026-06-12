@@ -18,6 +18,15 @@ export const STUDENT_GRADES = ['小学', '初一', '初二', '初三', '高一',
 
 export const TEACH_GRADES = ['小学', '初中', '高中']
 
+export const GRADE_CATEGORIES = ['小学', '初中', '高中', '其他']
+
+export function getGradeCategory(grade = '') {
+  if (grade.includes('小')) return '小学'
+  if (grade.includes('初')) return '初中'
+  if (grade.includes('高')) return '高中'
+  return '其他'
+}
+
 export const STUDENT_SOURCES = ['传单', '亲友', '微信', '回头客']
 
 export const TEACHER_FILTER_OPTIONS = ['未分配', '已分配']

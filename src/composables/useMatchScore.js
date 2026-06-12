@@ -14,6 +14,22 @@ function getGradeStage(grade = '') {
   return ''
 }
 
+function getAreaMatch(student, teacherAreas) {
+  const studentArea = String(student.area ?? '').trim()
+  if (studentArea) {
+    if (teacherAreas.includes(studentArea)) {
+      return { hit: studentArea, bonus: 30, exact: true }
+    }
+    return null
+  }
+
+  const addressHit = teacherAreas.find((area) => student.address?.includes(area))
+  if (addressHit) {
+    return { hit: addressHit, bonus: 20, exact: false }
+  }
+  return null
+}
+
 export function calculateMatchScore(student, teacher) {
   if (!student || !teacher) {
     return { score: 0, reasons: [] }
@@ -40,10 +56,10 @@ export function calculateMatchScore(student, teacher) {
   }
 
   const teacherAreas = normalizeList(teacher.area)
-  const areaHit = teacherAreas.find((area) => student.address?.includes(area))
-  if (areaHit) {
-    score += 20
-    reasons.push(`地区匹配：${areaHit}`)
+  const areaMatch = getAreaMatch(student, teacherAreas)
+  if (areaMatch) {
+    score += areaMatch.bonus
+    reasons.push(areaMatch.exact ? `区域一致：${areaMatch.hit}` : `地区匹配：${areaMatch.hit}`)
   }
 
   const studentCount = Array.isArray(teacher.student) ? teacher.student.length : normalizeList(teacher.student).length
