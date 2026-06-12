@@ -98,7 +98,7 @@ onMounted(async () => {
 
 <template>
   <AdminLayout>
-    <PageHeader title="学员中心" description="按状态管理学员，从分院到分配教员形成清晰跟进流程。" />
+    <PageHeader title="学员中心" description="按状态管理学员，从分院到分配教员跟进流程。" />
 
     <section class="admin-card filter-panel">
       <el-form :inline="true" :model="formInline" class="search-form">
